@@ -1,16 +1,18 @@
-import { Editor, TinyMCE } from 'tinymce';
+import { Editor, TinyMCE } from "tinymce";
+import { Dialog } from "./core/dialog";
 
 declare const tinymce: TinyMCE;
 
-const setup = (editor: Editor, url: string): void => {
-  editor.ui.registry.addButton('image-plugin', {
-    text: 'image-plugin button',
-    onAction: () => {
-      editor.setContent('<p>content added from image-plugin</p>');
-    }
+const register = (editor: Editor) => {
+  editor.ui.registry.addToggleButton("geo-image", {
+    icon: "image",
+    tooltip: "Insert/edit image",
+    onAction: Dialog(editor).open,
   });
 };
 
 export default (): void => {
-  tinymce.PluginManager.add('image-plugin', setup);
+  tinymce.PluginManager.add("geo-image", (editor) => {
+    register(editor);
+  });
 };

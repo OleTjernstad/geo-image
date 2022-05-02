@@ -1,13 +1,13 @@
-import { TinyMCE } from 'tinymce';
+import { TinyMCE } from "tinymce";
 
-import Plugin from '../../main/ts/Plugin';
+import Plugin from "../../main/ts/Plugin";
 
 declare let tinymce: TinyMCE;
 
 Plugin();
 
 tinymce.init({
-  selector: 'textarea.tinymce',
-  plugins: 'code image-plugin',
-  toolbar: 'image-plugin'
+  selector: "textarea.tinymce",
+  plugins: "code geo-image",
+  toolbar: "geo-image",
 });
