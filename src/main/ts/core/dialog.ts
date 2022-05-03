@@ -9,9 +9,48 @@ export const Dialog = (editor: Editor): { open: () => void } => {
         type: "panel",
         items: [
           {
+            type: "bar", // component type
+            items: [
+              {
+                type: "button", // component type
+                icon: "align-left",
+                text: "Venstre",
+                buttonType: "toolbar",
+                name: "left",
+                enabled: true,
+              },
+              {
+                type: "button", // component type
+                icon: "align-left",
+                text: "Venstre",
+                buttonType: "toolbar",
+                name: "center",
+                enabled: true,
+              },
+              {
+                type: "button", // component type
+                icon: "align-left",
+                text: "Venstre",
+                buttonType: "toolbar",
+                name: "right",
+                enabled: true,
+              },
+            ], // array of panel components
+          },
+          {
             type: "input",
-            name: "imgurl",
+            name: "src",
             label: "Url til bildet",
+          },
+          {
+            type: "input",
+            name: "alt",
+            label: "Beskrivelse av bildet (alt)",
+          },
+          {
+            type: "input",
+            name: "caption",
+            label: "Tekst under bildet (caption)",
           },
         ],
       },
@@ -29,7 +68,11 @@ export const Dialog = (editor: Editor): { open: () => void } => {
         },
       ],
       onSubmit: (api) => {
-        console.log(api.getData());
+        editor.execCommand("geoUpdateImage", false, api.getData());
+        api.close();
+      },
+      onChange: (api) => {
+        console.log(api);
       },
     });
   };

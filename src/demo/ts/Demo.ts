@@ -9,5 +9,5 @@ Plugin();
 tinymce.init({
   selector: "textarea.tinymce",
   plugins: "code geo-image",
-  toolbar: "geo-image",
+  toolbar: "geo-image | code",
 });
