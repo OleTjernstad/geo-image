@@ -9,15 +9,11 @@ export const create = (data: Data): HTMLImageElement | HTMLElement => {
   const image = document.createElement("img");
   image.src = data.src;
   image.alt = data.alt;
-  // write(
-  //   normalizeCss,
-  //   {
-  //     ...data,
-  //     caption: false,
-  //   },
-  //   image
-  // );
-  // setAlt(image, data.alt, data.isDecorative);
+  if (data.size) {
+    image.width = Number(data.size.width);
+    image.height = Number(data.size.height);
+  }
+
   if (data.caption) {
     const figure = DOM.create("figure", { class: "image" });
     figure.appendChild(image);

@@ -2,6 +2,10 @@ export interface Data {
   src: string;
   alt: string;
   caption?: string;
+  size: {
+    width: string;
+    height: string;
+  };
 }
 
 export interface DialogChangeApi {
