@@ -1,4 +1,6 @@
 import { Editor } from "tinymce";
+import { DialogChangeApi, isData } from "../types/plugin";
+import { imageSize } from "./utils";
 
 export const Dialog = (editor: Editor): { open: () => void } => {
   const open = () => {
@@ -8,35 +10,6 @@ export const Dialog = (editor: Editor): { open: () => void } => {
       body: {
         type: "panel",
         items: [
-          {
-            type: "bar", // component type
-            items: [
-              {
-                type: "button", // component type
-                icon: "align-left",
-                text: "Venstre",
-                buttonType: "toolbar",
-                name: "left",
-                enabled: true,
-              },
-              {
-                type: "button", // component type
-                icon: "align-left",
-                text: "Venstre",
-                buttonType: "toolbar",
-                name: "center",
-                enabled: true,
-              },
-              {
-                type: "button", // component type
-                icon: "align-left",
-                text: "Venstre",
-                buttonType: "toolbar",
-                name: "right",
-                enabled: true,
-              },
-            ], // array of panel components
-          },
           {
             type: "input",
             name: "src",
@@ -51,6 +24,12 @@ export const Dialog = (editor: Editor): { open: () => void } => {
             type: "input",
             name: "caption",
             label: "Tekst under bildet (caption)",
+          },
+          {
+            type: "sizeinput", // component type
+            name: "size", // identifier
+            label: "Størrelse",
+            enabled: true, // enabled state
           },
         ],
       },
@@ -71,10 +50,27 @@ export const Dialog = (editor: Editor): { open: () => void } => {
         editor.execCommand("geoUpdateImage", false, api.getData());
         api.close();
       },
-      onChange: (api) => {
-        console.log(api);
+      onChange: (api, e) => {
+        console.log(api.getData());
+        switch (e.name) {
+          case "src":
+            srcChange(api);
+            break;
+
+          default:
+            break;
+        }
       },
     });
   };
   return { open };
 };
+
+function srcChange(api: DialogChangeApi): void {
+  const data = api.getData();
+  if (isData(data)) {
+    imageSize(data.src).then((size) => {
+      api.setData({ size });
+    });
+  }
+}
