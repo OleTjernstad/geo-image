@@ -1,5 +1,5 @@
 {
-  "name": "image-plugin",
+  "name": "geo-image",
   "version": "1.0.0",
   "description": "insert geocaching image",
   "scripts": {
