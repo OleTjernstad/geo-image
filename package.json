@@ -1,5 +1,5 @@
 {
-  "name": "@ole-tjernstad/geo-image",
+  "name": "@tjernstad-utvikling/geo-image",
   "version": "1.0.0",
   "description": "insert geocaching image",
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/OleTjernstad/geo-image.git"
+    "url": "https://github.com/tjernstad-utvikling/geo-image.git"
   },
   "keywords": [],
   "author": "Ole Tjernstad",
