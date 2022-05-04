@@ -46,16 +46,9 @@
     "webpack": "^4.25.1",
     "webpack-livereload-plugin": "^2.1.1"
   },
+
   "files": [
-    "lib/main",
-    "lib/demo",
-    "lib/test",
-    "src",
-    "tsconfig.json",
-    "readme.md",
-    "LEGAL.txt",
-    "CHANGELOG.txt",
-    "LICENSE.txt"
+    "dist/**/*"
   ],
   "main": "./lib/main/ts/api/Main.js",
   "module": "./lib/main/ts/api/Main.js",
