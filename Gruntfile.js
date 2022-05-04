@@ -82,11 +82,11 @@ module.exports = (grunt) => {
         },
         // scratchPluginMinPath is used twice on purpose, all outputs will be minified for premium plugins
         files: {
-          "dist/geo-image/plugin.js": [
+          "dist/plugin.js": [
             "src/text/license-header.js",
             scratchPluginMinPath,
           ],
-          "dist/geo-image/plugin.min.js": [
+          "dist/plugin.min.js": [
             "src/text/license-header.js",
             scratchPluginMinPath,
           ],
@@ -99,7 +99,7 @@ module.exports = (grunt) => {
         files: [
           {
             src: ["CHANGELOG.txt", "LICENSE.txt"],
-            dest: "dist/geo-image",
+            dest: "dist",
             expand: true,
           },
         ],
@@ -155,7 +155,7 @@ module.exports = (grunt) => {
   grunt.loadNpmTasks("@ephox/swag");
 
   grunt.registerTask("version", "Creates a version file", () => {
-    grunt.file.write("dist/geo-image/version.txt", BUILD_VERSION);
+    grunt.file.write("dist/version.txt", BUILD_VERSION);
   });
 
   grunt.registerTask("default", [
