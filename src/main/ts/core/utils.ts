@@ -48,3 +48,6 @@ const getImageSize = (
 
 const parseIntAndGetMax = (val1: string | number, val2: string | number) =>
   Math.max(parseInt(String(val1), 10), parseInt(String(val2), 10));
+
+export const isFigure = (elm: Element): boolean => elm.nodeName === "FIGURE";
+export const isImage = (elm: Element): boolean => elm.nodeName === "IMG";

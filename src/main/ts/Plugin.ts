@@ -1,6 +1,7 @@
 import { Editor, TinyMCE } from "tinymce";
 import { Dialog } from "./core/dialog";
 import { insertImageAtCaret } from "./core/element";
+import { isFigure, isImage } from "./core/utils";
 
 declare const tinymce: TinyMCE;
 
@@ -9,6 +10,17 @@ const register = (editor: Editor) => {
     icon: "image",
     tooltip: "Insert/edit image",
     onAction: Dialog(editor).open,
+  });
+
+  editor.ui.registry.addMenuItem("image", {
+    icon: "image",
+    text: "Bilde...",
+    onAction: Dialog(editor).open,
+  });
+
+  editor.ui.registry.addContextMenu("image", {
+    update: (element) =>
+      isFigure(element) || isImage(element) ? ["image"] : [],
   });
 };
 
