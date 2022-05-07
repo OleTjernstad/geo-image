@@ -1,9 +1,10 @@
 import { Editor } from "tinymce";
 import { DialogChangeApi, isData } from "../types/plugin";
-import { imageSize } from "./utils";
+import { imageSize, readImageDataFromSelection } from "./utils";
 
 export const Dialog = (editor: Editor): { open: () => void } => {
   const open = () => {
+    const image = readImageDataFromSelection(editor);
     editor.windowManager.open({
       title: "Sett inn bilde",
       size: "normal",
@@ -33,6 +34,7 @@ export const Dialog = (editor: Editor): { open: () => void } => {
           },
         ],
       },
+      initialData: image,
       buttons: [
         {
           type: "cancel",
@@ -51,7 +53,6 @@ export const Dialog = (editor: Editor): { open: () => void } => {
         api.close();
       },
       onChange: (api, e) => {
-        console.log(api.getData());
         switch (e.name) {
           case "src":
             srcChange(api);

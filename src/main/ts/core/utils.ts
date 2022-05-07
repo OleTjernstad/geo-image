@@ -1,3 +1,10 @@
+import { Editor, TinyMCE } from "tinymce";
+import { Data } from "../types/plugin";
+
+declare const tinymce: TinyMCE;
+
+const DOM = tinymce.DOM;
+
 export const imageSize = (
   url: string
 ): Promise<{
@@ -51,3 +58,173 @@ const parseIntAndGetMax = (val1: string | number, val2: string | number) =>
 
 export const isFigure = (elm: Element): boolean => elm.nodeName === "FIGURE";
 export const isImage = (elm: Element): boolean => elm.nodeName === "IMG";
+
+export const getSelectedImage = (editor: Editor): HTMLImageElement => {
+  const imgElm = editor.selection?.getNode();
+  if (!imgElm) return;
+  const figureElm = editor.dom.getParent(imgElm, "figure.image");
+  if (figureElm) {
+    return editor.dom.select("img", figureElm)[0];
+  }
+  if (imgElm && imgElm.nodeName !== "IMG") {
+    return null;
+  }
+  return imgElm as HTMLImageElement;
+};
+
+export const readImageDataFromSelection = (editor: Editor): Data => {
+  const image = getSelectedImage(editor);
+  return image ? read(editor, image) : defaultData();
+};
+
+const defaultData = (): Data => ({
+  src: "",
+  alt: "",
+  title: "",
+  size: {
+    width: "",
+    height: "",
+  },
+  class: "",
+  style: "",
+  caption: "",
+  hspace: "",
+  vspace: "",
+  border: "",
+  borderStyle: "",
+  isDecorative: false,
+});
+
+const read = (editor: Editor, image: HTMLImageElement): Data => ({
+  src: getAttrib(image, "src"),
+  alt: getAlt(image),
+  title: getAttrib(image, "title"),
+  size: { width: getSize(image, "width"), height: getSize(image, "height") },
+  class: getAttrib(image, "class"),
+  style: normalizeCss(editor, getAttrib(image, "style")),
+  caption: getCaption(image),
+  hspace: getHspace(image),
+  vspace: getVspace(image),
+  border: getBorder(image),
+  borderStyle: getStyle(image, "borderStyle"),
+  isDecorative: getIsDecorative(image),
+});
+
+const normalizeCss = (editor: Editor, cssText: string) => {
+  const css = editor.dom.styles.parse(cssText);
+  const mergedCss = mergeMargins(css);
+  const compressed = editor.dom.styles.parse(
+    editor.dom.styles.serialize(mergedCss)
+  );
+  return editor.dom.styles.serialize(compressed);
+};
+
+const mergeMargins = (css: Record<string, string>) => {
+  if (css.margin) {
+    const splitMargin = String(css.margin).split(" ");
+    switch (splitMargin.length) {
+      case 1:
+        css["margin-top"] = css["margin-top"] || splitMargin[0];
+        css["margin-right"] = css["margin-right"] || splitMargin[0];
+        css["margin-bottom"] = css["margin-bottom"] || splitMargin[0];
+        css["margin-left"] = css["margin-left"] || splitMargin[0];
+        break;
+      case 2:
+        css["margin-top"] = css["margin-top"] || splitMargin[0];
+        css["margin-right"] = css["margin-right"] || splitMargin[1];
+        css["margin-bottom"] = css["margin-bottom"] || splitMargin[0];
+        css["margin-left"] = css["margin-left"] || splitMargin[1];
+        break;
+      case 3:
+        css["margin-top"] = css["margin-top"] || splitMargin[0];
+        css["margin-right"] = css["margin-right"] || splitMargin[1];
+        css["margin-bottom"] = css["margin-bottom"] || splitMargin[2];
+        css["margin-left"] = css["margin-left"] || splitMargin[1];
+        break;
+      case 4:
+        css["margin-top"] = css["margin-top"] || splitMargin[0];
+        css["margin-right"] = css["margin-right"] || splitMargin[1];
+        css["margin-bottom"] = css["margin-bottom"] || splitMargin[2];
+        css["margin-left"] = css["margin-left"] || splitMargin[3];
+    }
+    delete css.margin;
+  }
+  return css;
+};
+
+const removePixelSuffix = (value: string) => {
+  if (value) {
+    value = value.replace(/px$/, "");
+  }
+  return value;
+};
+
+const getHspace = (image: HTMLImageElement) => {
+  if (
+    image.style.marginLeft &&
+    image.style.marginRight &&
+    image.style.marginLeft === image.style.marginRight
+  ) {
+    return removePixelSuffix(image.style.marginLeft);
+  } else {
+    return "";
+  }
+};
+
+const getVspace = (image: HTMLImageElement) => {
+  if (
+    image.style.marginTop &&
+    image.style.marginBottom &&
+    image.style.marginTop === image.style.marginBottom
+  ) {
+    return removePixelSuffix(image.style.marginTop);
+  } else {
+    return "";
+  }
+};
+
+const getBorder = (image: HTMLImageElement) => {
+  if (image.style.borderWidth) {
+    return removePixelSuffix(image.style.borderWidth);
+  } else {
+    return "";
+  }
+};
+
+const getAttrib = (image: HTMLImageElement, name: string) => {
+  if (image.hasAttribute(name)) {
+    return image.getAttribute(name);
+  } else {
+    return "";
+  }
+};
+
+const getStyle = (image: HTMLImageElement, name: string) =>
+  image.style[name] ? image.style[name] : "";
+
+const getIsDecorative = (image: HTMLImageElement) =>
+  DOM.getAttrib(image, "alt").length === 0 &&
+  DOM.getAttrib(image, "role") === "presentation";
+
+const getAlt = (image: HTMLImageElement) => {
+  if (getIsDecorative(image)) {
+    return "";
+  } else {
+    return getAttrib(image, "alt");
+  }
+};
+
+const getSize = (image: HTMLImageElement, name: string) => {
+  if (image.style[name]) {
+    return removePixelSuffix(image.style[name]);
+  } else {
+    return getAttrib(image, name);
+  }
+};
+
+const getCaption = (image: HTMLImageElement): string => {
+  if (image.parentNode !== null && image.parentNode.nodeName === "FIGURE") {
+    return image.parentElement.lastChild.textContent;
+  }
+  return "";
+};

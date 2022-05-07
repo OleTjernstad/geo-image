@@ -1,6 +1,14 @@
 export interface Data {
   src: string;
   alt: string;
+  title: string;
+  class: string;
+  style: string;
+  hspace: string;
+  vspace: string;
+  border: string;
+  borderStyle: string;
+  isDecorative: boolean;
   caption?: string;
   size: {
     width: string;
