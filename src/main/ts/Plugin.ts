@@ -1,6 +1,7 @@
 import { Editor, TinyMCE } from "tinymce";
 import { Dialog } from "./core/dialog";
-import { insertImageAtCaret } from "./core/element";
+import { insertOrUpdateImage } from "./core/element";
+
 import { isFigure, isImage } from "./core/utils";
 
 declare const tinymce: TinyMCE;
@@ -26,7 +27,7 @@ const register = (editor: Editor) => {
 
 const register$1 = (editor: Editor) => {
   editor.addCommand("geoUpdateImage", (_ui, data) => {
-    editor.undoManager.transact(() => insertImageAtCaret(editor, data));
+    editor.undoManager.transact(() => insertOrUpdateImage(editor, data));
   });
 };
 

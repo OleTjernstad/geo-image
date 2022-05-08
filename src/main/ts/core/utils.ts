@@ -1,5 +1,12 @@
 import { Editor, TinyMCE } from "tinymce";
 import { Data } from "../types/plugin";
+import {
+  setSize,
+  updateAttrib,
+  updateCaption,
+  updateProp,
+  updateSize,
+} from "./save";
 
 declare const tinymce: TinyMCE;
 
@@ -56,7 +63,8 @@ const getImageSize = (
 const parseIntAndGetMax = (val1: string | number, val2: string | number) =>
   Math.max(parseInt(String(val1), 10), parseInt(String(val2), 10));
 
-export const isFigure = (elm: Element): boolean => elm.nodeName === "FIGURE";
+export const isFigure = (elm: Element | ParentNode): boolean =>
+  elm.nodeName === "FIGURE";
 export const isImage = (elm: Element): boolean => elm.nodeName === "IMG";
 
 export const getSelectedImage = (editor: Editor): HTMLImageElement => {
@@ -77,7 +85,7 @@ export const readImageDataFromSelection = (editor: Editor): Data => {
   return image ? read(editor, image) : defaultData();
 };
 
-const defaultData = (): Data => ({
+export const defaultData = (): Data => ({
   src: "",
   alt: "",
   title: "",
@@ -95,7 +103,7 @@ const defaultData = (): Data => ({
   isDecorative: false,
 });
 
-const read = (editor: Editor, image: HTMLImageElement): Data => ({
+export const read = (editor: Editor, image: HTMLImageElement): Data => ({
   src: getAttrib(image, "src"),
   alt: getAlt(image),
   title: getAttrib(image, "title"),
@@ -110,7 +118,35 @@ const read = (editor: Editor, image: HTMLImageElement): Data => ({
   isDecorative: getIsDecorative(image),
 });
 
-const normalizeCss = (editor: Editor, cssText: string) => {
+const write = (editor: Editor, newData: Data, image: HTMLImageElement) => {
+  const oldData = read(editor, image);
+  updateProp(image, oldData, newData, "caption", updateCaption);
+  updateProp(image, oldData, newData, "src", updateAttrib);
+  updateProp(image, oldData, newData, "title", updateAttrib);
+  updateSize(image, oldData, newData, "width", setSize(editor));
+  updateSize(image, oldData, newData, "height", setSize(editor));
+  updateProp(image, oldData, newData, "class", updateAttrib);
+  updateProp(
+    image,
+    oldData,
+    newData,
+    "style",
+    normalized(editor, (image, value) => updateAttrib(image, "style", value))
+  );
+  updateProp(image, oldData, newData, "hspace", normalized(editor, setHspace));
+  updateProp(image, oldData, newData, "vspace", normalized(editor, setVspace));
+  updateProp(image, oldData, newData, "border", normalized(editor, setBorder));
+  updateProp(
+    image,
+    oldData,
+    newData,
+    "borderStyle",
+    normalized(editor, setBorderStyle)
+  );
+  updateProp(image, oldData, newData, "alt", updateAttrib);
+};
+
+export const normalizeCss = (editor: Editor, cssText: string): string => {
   const css = editor.dom.styles.parse(cssText);
   const mergedCss = mergeMargins(css);
   const compressed = editor.dom.styles.parse(
@@ -227,4 +263,65 @@ const getCaption = (image: HTMLImageElement): string => {
     return image.parentElement.lastChild.textContent;
   }
   return "";
+};
+
+export const writeImageDataToSelection = (editor: Editor, data: Data): void => {
+  const image = getSelectedImage(editor);
+  write(editor, data, image);
+  syncSrcAttr(editor, image);
+  if (isFigure(image.parentNode)) {
+    // const figure = image.parentNode;
+    // splitTextBlock(editor, figure);
+    editor.selection.select(image.parentNode);
+  } else {
+    editor.selection.select(image);
+    // waitLoadImage(editor, data, image);
+  }
+};
+
+export const addPixelSuffix = (value: string): string => {
+  if (value.length > 0 && /^[0-9]+$/.test(value)) {
+    value += "px";
+  }
+  return value;
+};
+
+const setHspace = (image: HTMLImageElement, value: string) => {
+  const pxValue = addPixelSuffix(value);
+  image.style.marginLeft = pxValue;
+  image.style.marginRight = pxValue;
+};
+const setVspace = (image: HTMLImageElement, value: string) => {
+  const pxValue = addPixelSuffix(value);
+  image.style.marginTop = pxValue;
+  image.style.marginBottom = pxValue;
+};
+const setBorder = (image: HTMLImageElement, value: string) => {
+  const pxValue = addPixelSuffix(value);
+  image.style.borderWidth = pxValue;
+};
+const setBorderStyle = (image: HTMLImageElement, value: string) => {
+  image.style.borderStyle = value;
+};
+
+const normalized =
+  (editor: Editor, set: (image: HTMLImageElement, value: string) => void) =>
+  (image: HTMLImageElement, name: string, value: string) => {
+    set(image, value);
+    normalizeStyle(editor, image);
+  };
+
+const normalizeStyle = (editor: Editor, image: HTMLImageElement) => {
+  const attrValue = image.getAttribute("style");
+  const value = normalizeCss(editor, attrValue !== null ? attrValue : "");
+  if (value.length > 0) {
+    image.setAttribute("style", value);
+    image.setAttribute("data-mce-style", value);
+  } else {
+    image.removeAttribute("style");
+  }
+};
+
+const syncSrcAttr = (editor: Editor, image: HTMLImageElement) => {
+  editor.dom.setAttrib(image, "src", image.getAttribute("src"));
 };

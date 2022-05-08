@@ -46,7 +46,6 @@
     "webpack": "^4.25.1",
     "webpack-livereload-plugin": "^2.1.1"
   },
-
   "files": [
     "dist/**/*"
   ],
