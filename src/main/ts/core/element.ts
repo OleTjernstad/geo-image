@@ -21,15 +21,15 @@ export const create = (data: Data): HTMLImageElement | HTMLElement => {
     image.height = Number(data.size.height);
   }
 
-  if (data.caption) {
-    const figure = DOM.create("figure", { class: "image" });
-    figure.appendChild(image);
-    figure.appendChild(DOM.create("figcaption", {}, data.caption));
+  // if (data.caption) {
+  //   const figure = DOM.create("figure", { class: "image" });
+  //   figure.appendChild(image);
+  //   figure.appendChild(DOM.create("figcaption", {}, data.caption));
 
-    return figure;
-  } else {
-    return image;
-  }
+  //   return figure;
+  // } else {
+  return image;
+  //}
 };
 
 const insertImageAtCaret = (editor: Editor, data: Data): void => {

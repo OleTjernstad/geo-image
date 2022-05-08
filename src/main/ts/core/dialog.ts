@@ -21,11 +21,11 @@ export const Dialog = (editor: Editor): { open: () => void } => {
             name: "alt",
             label: "Beskrivelse av bildet (alt)",
           },
-          {
-            type: "input",
-            name: "caption",
-            label: "Tekst under bildet (caption)",
-          },
+          // {
+          //   type: "input",
+          //   name: "caption",
+          //   label: "Tekst under bildet (caption)",
+          // },
           {
             type: "sizeinput", // component type
             name: "size", // identifier
