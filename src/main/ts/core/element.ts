@@ -1,4 +1,4 @@
-import { Editor, TinyMCE } from "tinymce";
+import { Editor } from "tinymce";
 import { Data } from "../types/plugin";
 import { deleteImage } from "./save";
 import {
@@ -8,9 +8,9 @@ import {
   writeImageDataToSelection,
 } from "./utils";
 
-declare const tinymce: TinyMCE;
+// declare const tinymce: TinyMCE;
 
-const DOM = tinymce.DOM;
+// const DOM = tinymce.DOM;
 
 export const create = (data: Data): HTMLImageElement | HTMLElement => {
   const image = document.createElement("img");

@@ -7,6 +7,7 @@ import {
   updateProp,
   updateSize,
 } from "./save";
+import approvedDomains from "../core/approvedDomains.json";
 
 declare const tinymce: TinyMCE;
 
