@@ -1,7 +1,7 @@
 import { Editor, TinyMCE } from "tinymce";
 import { Data } from "../types/plugin";
 
-import approvedDomains from "../core/approvedDomains.json";
+import approvedDomains from "./approvedDomains";
 
 declare const tinymce: TinyMCE;
 
