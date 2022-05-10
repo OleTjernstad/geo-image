@@ -57,16 +57,6 @@ export const Dialog = (editor: Editor): { open: () => void } => {
         editor.execCommand("geoUpdateImage", false, api.getData());
         api.close();
       },
-      onTabChange: (api, e) => {
-        switch (e.oldTabName) {
-          case "src":
-            checkImageUrl(api, editor);
-            break;
-
-          default:
-            break;
-        }
-      },
       onChange: (api, e) => {
         switch (e.name) {
           case "src":
