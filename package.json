@@ -1,6 +1,6 @@
 {
   "name": "@tjernstad-utvikling/geo-image",
-  "version": "0.1",
+  "version": "0.1.1",
   "description": "insert geocaching image",
   "scripts": {
     "prepublishOnly": "yarn lint && yarn build",
