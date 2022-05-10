@@ -1,8 +1,8 @@
 import { Editor } from "tinymce";
 import { Data } from "../types/plugin";
-import { deleteImage } from "./save";
 import {
   defaultData,
+  deleteImage,
   getSelectedImage,
   read,
   writeImageDataToSelection,
