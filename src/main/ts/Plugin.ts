@@ -29,6 +29,12 @@ const register$1 = (editor: Editor) => {
   editor.addCommand("geoUpdateImage", (_ui, data) => {
     editor.undoManager.transact(() => insertOrUpdateImage(editor, data));
   });
+  editor.addCommand("alertInvalidUrl", () => {
+    editor.notificationManager.open({
+      text: "Geocaching.com begrenser steder man kan bruke bilder ifra. Anbefaler at bilder lastes opp i cache beskrivelsen",
+      type: "warning",
+    });
+  });
 };
 
 export default (): void => {

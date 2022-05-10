@@ -19,10 +19,11 @@ export const imageSize = (
   width: string;
   height: string;
 }> => {
-  return getImageSize(url).then((dimensions) => ({
-    width: String(dimensions.width),
-    height: String(dimensions.height),
-  }));
+  if (isValidUrl(url))
+    return getImageSize(url).then((dimensions) => ({
+      width: String(dimensions.width),
+      height: String(dimensions.height),
+    }));
 };
 
 const getImageSize = (
@@ -63,6 +64,22 @@ const getImageSize = (
 
 const parseIntAndGetMax = (val1: string | number, val2: string | number) =>
   Math.max(parseInt(String(val1), 10), parseInt(String(val2), 10));
+
+export function validateImageUrl(url: string): boolean {
+  const a = document.createElement("a");
+  a.setAttribute("href", url);
+  return approvedDomains.includes(a.hostname);
+}
+
+export const isValidUrl = (url: string): boolean => {
+  try {
+    new URL(url);
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+  return true;
+};
 
 export const isFigure = (elm: Element | ParentNode): boolean =>
   elm.nodeName === "FIGURE";

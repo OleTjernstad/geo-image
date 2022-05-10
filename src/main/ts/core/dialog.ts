@@ -1,6 +1,10 @@
 import { Editor } from "tinymce";
 import { DialogChangeApi, isData } from "../types/plugin";
-import { imageSize, readImageDataFromSelection } from "./utils";
+import {
+  imageSize,
+  readImageDataFromSelection,
+  validateImageUrl,
+} from "./utils";
 
 export const Dialog = (editor: Editor): { open: () => void } => {
   const open = () => {
@@ -49,8 +53,19 @@ export const Dialog = (editor: Editor): { open: () => void } => {
         },
       ],
       onSubmit: (api) => {
+        checkImageUrl(api, editor);
         editor.execCommand("geoUpdateImage", false, api.getData());
         api.close();
+      },
+      onTabChange: (api, e) => {
+        switch (e.oldTabName) {
+          case "src":
+            checkImageUrl(api, editor);
+            break;
+
+          default:
+            break;
+        }
       },
       onChange: (api, e) => {
         switch (e.name) {
@@ -73,5 +88,16 @@ function srcChange(api: DialogChangeApi): void {
     imageSize(data.src).then((size) => {
       api.setData({ size });
     });
+  }
+}
+
+function checkImageUrl(api: DialogChangeApi, editor: Editor): boolean {
+  const data = api.getData();
+  if (isData(data)) {
+    if (!validateImageUrl(data.src)) {
+      editor.execCommand("alertInvalidUrl");
+      return false;
+    }
+    return true;
   }
 }

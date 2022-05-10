@@ -47,7 +47,7 @@ export const updateCaption = (
     parent.replaceWith(image);
   } else {
     const sibling = image.nextSibling;
-    console.log({ sibling });
+
     if (sibling.nodeName === "FIGCAPTION") {
       sibling.textContent = value;
     }
